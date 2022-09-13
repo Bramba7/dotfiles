@@ -1,0 +1,91 @@
+# Basic Settings
+set preview on
+set icons on
+set drawbox on
+
+# Custom Functions
+cmd mkdir ${{
+  printf "Directory Name: "
+  read ans
+  mkdir $ans
+ }}
+
+cmd mkfile ${{
+  printf "File Name: "
+  read ans
+  $EDITOR $ans
+ }}
+
+cmd sudomkfile ${{
+  printf "File Name: "
+  read ans
+  sudo $EDITOR $ans
+ }}
+# Permissions
+cmd chmod ${{
+  zmodload -Fa zsh/zle b:vared
+  clear; vared -cp "Change permissions: " perm
+  chmod -- $perm $fx
+  lf -remote 'send reload'
+  lf -remote 'send clear'
+}}
+
+# Ownership
+cmd chown ${{
+  zmodload -Fa zsh/zle b:vared
+  clear; vared -cp "Ownership: " owner
+  chown -- $owner $fx
+  lf -remote 'send reload'
+  lf -remote 'send clear'
+}}
+# Archive bindings
+cmd unarchive ${{
+  case "$f" in
+    *.zip) unzip "$f" ;;
+    *.tar.gz) tar -xzvf "$f" ;;
+    *.tar.bz2) tar -xjvf "$f" ;;
+    *.tar) tar -xvf "$f" ;;
+    *)echo "Unsupported format" ;;
+  esac
+ }}
+
+cmd zip %zip -r "$f" "$f"
+cmd tar %tar cvf "$f.tar" "$f"
+cmd targz %tar cvzf "$f.tar.gz" "$f"
+cmd tarbz2 %tar cjvf "$f. tar.bz2" "$f"
+
+# Bindings
+# Remove some defaults
+map m
+map o
+map n
+map "'"
+map '"'
+map d
+map e
+map c
+
+# Basic Functions
+map . set hidden!
+map DD delete
+map p paste
+map x cut
+map y copy
+map mf mkfile
+map ms sudomkfile
+map md mkdir
+map cm chmod
+map co chown
+map <enter> open
+map <esc> quit
+
+# File Openers
+map ee $$EDITOR "$f"
+map es $sudo $EDITOR "$f"
+
+#Archive Mappings
+map az zip
+map at tar
+map ag targz
+map ab tarbz2
+map au unarchive
