@@ -64,13 +64,13 @@ augroup exe_code
     autocmd!
 		" execute Python code
 		autocmd FileType python nnoremap <buffer> <C-r>
-								\ :sp<CR> :term python3 %<CR> :startinsert<CR>
+			\ :sp<CR> :term python3 %<CR> :startinsert<CR>
 		" execute js code
 		autocmd FileType javascript nnoremap <buffer> <C-r>
-								\ :sp<CR> :term nodejs %<CR> :startinsert<CR>
+			\ :sp<CR> :term nodejs %<CR> :startinsert<CR>
 		" execute bash code
 		autocmd FileType bash nnoremap <buffer> <C-r>
-								\ :sp<CR> :term bash %<CR> :startinsert<CR>
+			\ :sp<CR> :term bash %<CR> :startinsert<CR>
 augroup END
 
 nnoremap Q <nop>
