@@ -77,9 +77,8 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
-
 # You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
@@ -87,6 +86,15 @@ source $ZSH/oh-my-zsh.sh
 # else
 #   export EDITOR='mvim'
 # fi
+
+# Docker
+alias dco="docker compose"
+alias dps="docker ps"
+alias dpa="docker ps -a"
+alias dl="docker ps -l -q"
+alias dx="docker exec -it"
+alias dks="docker ps --format 'table {{.ID}}\t{{.Names}}'"
+alias dkp="docker ps --format 'table {{.Names}}\t{{.Ports}}'"
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -99,5 +107,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
 source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-alias dks="docker ps --format 'table {{.ID}}\t{{.Names}}'"
+
