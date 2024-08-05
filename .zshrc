@@ -88,11 +88,9 @@ export LANG=en_US.UTF-8
 # fi
 
 # Docker
-alias dco="docker compose"
-alias dps="docker ps"
-alias dpa="docker ps -a"
-alias dl="docker ps -l -q"
-alias dx="docker exec -it"
+alias dka="docker container ls -a"
+alias dkq="docker container ls -q"
+alias dkx="docker exec -it"
 alias dks="docker ps --format 'table {{.ID}}\t{{.Names}}'"
 alias dkp="docker ps --format 'table {{.Names}}\t{{.Ports}}'"
 
