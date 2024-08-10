@@ -64,6 +64,8 @@ alias dkx="docker exec -it"
 alias dks="docker ps --format 'table {{.ID}}\t{{.Names}}'"
 alias dkp="docker ps --format 'table {{.Names}}\t{{.Ports}}'"
 
+#General alias
+#alias cat=batcat
 
 #source ~/.local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
