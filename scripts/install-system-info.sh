@@ -18,54 +18,27 @@ elif command -v sudo >/dev/null 2>&1; then
     echo "🔐 Using sudo for installation..."
 else
     # Not root and no sudo - this will fail
-    echo "❌ Error: Not running as root and sudo not available"
-    echo "💡 Try: docker exec -u root <container> sh"
+    echo "Error: Not running as root and sudo not available"
+    echo "Try: docker exec -u root <container> sh"
     exit 1
 fi
 
 # Download and install the script
 if curl -sSL "$REPO_URL" | ${SUDO} tee "$SCRIPT_PATH" > /dev/null; then
     ${SUDO} chmod +x "$SCRIPT_PATH"
-    echo "✅ Script installed to $SCRIPT_PATH"
+    echo "Script installed to $SCRIPT_PATH"
 else
-    echo "❌ Failed to download script"
+    echo "Failed to download script"
     exit 1
 fi
 
-#!/bin/bash
-# Smart installer for system-info script
-# Usage: curl -sSL https://raw.githubusercontent.com/Bramba7/dotfiles/main/scripts/install-system-info.sh | bash
-
-REPO_URL="https://raw.githubusercontent.com/Bramba7/dotfiles/main/scripts/system-info.sh"
-SCRIPT_PATH="/etc/profile.d/01-system-info.sh"
-
-echo "🚀 Installing System Info Script..."
-
-# Check if running as root
-if [ "$EUID" -eq 0 ]; then
-    # Running as root - no sudo needed
-    SUDO=""
-else
-    # Not root - use sudo
-    SUDO="sudo"
-    echo "🔐 Root access required for installation..."
-fi
-
-# Download and install the script
-if curl -sSL "$REPO_URL" | $SUDO tee "$SCRIPT_PATH" > /dev/null; then
-    $SUDO chmod +x "$SCRIPT_PATH"
-    echo "✅ Script installed to $SCRIPT_PATH"
-else
-    echo "❌ Failed to download script"
-    exit 1
-fi
 
 # WSL compatibility - detect shell and add to appropriate profile
 if grep -q "Microsoft\|WSL" /proc/version 2>/dev/null; then
     echo "🐧 WSL detected - adding to shell profiles..."
     
     # Detect current shell
-    CURRENT_SHELL=$(basename "$SHELL" 2>/dev/null || echo "bash")
+    Current_shell=$(ps -p "$PPID" -o comm= | sed 's/^-//')
     
     case "$CURRENT_SHELL" in
         bash)
@@ -85,14 +58,13 @@ if grep -q "Microsoft\|WSL" /proc/version 2>/dev/null; then
             fi
             ;;
         fish)
-            if [ -d ~/.config/fish ]; then
-                FISH_CONFIG="~/.config/fish/config.fish"
-                if ! grep -q "source $SCRIPT_PATH" "$FISH_CONFIG" 2>/dev/null; then
-                    echo "source $SCRIPT_PATH" >> "$FISH_CONFIG"
-                    echo "✅ Added to $FISH_CONFIG"
+            if [ -f ~/.config/fish/config.fish ]; then
+                if ! grep -q "source $SCRIPT_PATH" ~/.config/fish/config.fish; then
+                  echo "source $SCRIPT_PATH" >> ~/.config/fish/config.fish
+                  echo "✅ Added to config.fish"
                 fi
             fi
-            ;;
+            ;;   
         *)
             echo "⚠️  Shell '$CURRENT_SHELL' detected - you may need to manually add:"
             echo "   source $SCRIPT_PATH"
