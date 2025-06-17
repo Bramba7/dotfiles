@@ -1,25 +1,31 @@
-#!/bin/bash
-# Smart installer for system-info script
-# Usage: curl -sSL https://raw.githubusercontent.com/Bramba7/dotfiles/main/scripts/install-system-info.sh | bash
+#!/bin/sh
+# Smart installer for system-info script (POSIX compatible)
+# Usage: curl -sSL https://raw.githubusercontent.com/Bramba7/dotfiles/main/scripts/install-system-info.sh | sh
 
 REPO_URL="https://raw.githubusercontent.com/Bramba7/dotfiles/main/scripts/system-info.sh"
 SCRIPT_PATH="/etc/profile.d/01-system-info.sh"
 
 echo "🚀 Installing System Info Script..."
 
-# Check if running as root
-if [ "$EUID" -eq 0 ]; then
+# Check if we need sudo (more robust check)
+if [ "$(id -u)" -eq 0 ]; then
     # Running as root - no sudo needed
     SUDO=""
-else
-    # Not root - use sudo
+    echo "🔑 Running as root"
+elif command -v sudo >/dev/null 2>&1; then
+    # Not root but sudo available
     SUDO="sudo"
-    echo "🔐 Root access required for installation..."
+    echo "🔐 Using sudo for installation..."
+else
+    # Not root and no sudo - this will fail
+    echo "❌ Error: Not running as root and sudo not available"
+    echo "💡 Try: docker exec -u root <container> sh"
+    exit 1
 fi
 
 # Download and install the script
-if curl -sSL "$REPO_URL" | $SUDO tee "$SCRIPT_PATH" > /dev/null; then
-    $SUDO chmod +x "$SCRIPT_PATH"
+if curl -sSL "$REPO_URL" | ${SUDO} tee "$SCRIPT_PATH" > /dev/null; then
+    ${SUDO} chmod +x "$SCRIPT_PATH"
     echo "✅ Script installed to $SCRIPT_PATH"
 else
     echo "❌ Failed to download script"
