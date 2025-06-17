@@ -26,25 +26,75 @@ else
     exit 1
 fi
 
-# WSL compatibility
-if grep -q "Microsoft" /proc/version 2>/dev/null || grep -q "WSL" /proc/version 2>/dev/null; then
+#!/bin/bash
+# Smart installer for system-info script
+# Usage: curl -sSL https://raw.githubusercontent.com/Bramba7/dotfiles/main/scripts/install-system-info.sh | bash
+
+REPO_URL="https://raw.githubusercontent.com/Bramba7/dotfiles/main/scripts/system-info.sh"
+SCRIPT_PATH="/etc/profile.d/01-system-info.sh"
+
+echo "🚀 Installing System Info Script..."
+
+# Check if running as root
+if [ "$EUID" -eq 0 ]; then
+    # Running as root - no sudo needed
+    SUDO=""
+else
+    # Not root - use sudo
+    SUDO="sudo"
+    echo "🔐 Root access required for installation..."
+fi
+
+# Download and install the script
+if curl -sSL "$REPO_URL" | $SUDO tee "$SCRIPT_PATH" > /dev/null; then
+    $SUDO chmod +x "$SCRIPT_PATH"
+    echo "✅ Script installed to $SCRIPT_PATH"
+else
+    echo "❌ Failed to download script"
+    exit 1
+fi
+
+# WSL compatibility - detect shell and add to appropriate profile
+if grep -q "Microsoft\|WSL" /proc/version 2>/dev/null; then
     echo "🐧 WSL detected - adding to shell profiles..."
     
-    # Add to bashrc if it exists
-    if [ -f ~/.bashrc ]; then
-        if ! grep -q "source $SCRIPT_PATH" ~/.bashrc; then
-            echo "source $SCRIPT_PATH" >> ~/.bashrc
-            echo "✅ Added to ~/.bashrc"
-        fi
-    fi
+    # Detect current shell
+    CURRENT_SHELL=$(basename "$SHELL" 2>/dev/null || echo "bash")
     
-    # Add to zshrc if it exists
-    if [ -f ~/.zshrc ]; then
-        if ! grep -q "source $SCRIPT_PATH" ~/.zshrc; then
-            echo "source $SCRIPT_PATH" >> ~/.zshrc
-            echo "✅ Added to ~/.zshrc"
-        fi
-    fi
+    case "$CURRENT_SHELL" in
+        bash)
+            if [ -f ~/.bashrc ]; then
+                if ! grep -q "source $SCRIPT_PATH" ~/.bashrc; then
+                    echo "source $SCRIPT_PATH" >> ~/.bashrc
+                    echo "✅ Added to ~/.bashrc"
+                fi
+            fi
+            ;;
+        zsh)
+            if [ -f ~/.zshrc ]; then
+                if ! grep -q "source $SCRIPT_PATH" ~/.zshrc; then
+                    echo "source $SCRIPT_PATH" >> ~/.zshrc
+                    echo "✅ Added to ~/.zshrc"
+                fi
+            fi
+            ;;
+        fish)
+            if [ -d ~/.config/fish ]; then
+                FISH_CONFIG="~/.config/fish/config.fish"
+                if ! grep -q "source $SCRIPT_PATH" "$FISH_CONFIG" 2>/dev/null; then
+                    echo "source $SCRIPT_PATH" >> "$FISH_CONFIG"
+                    echo "✅ Added to $FISH_CONFIG"
+                fi
+            fi
+            ;;
+        *)
+            echo "⚠️  Shell '$CURRENT_SHELL' detected - you may need to manually add:"
+            echo "   source $SCRIPT_PATH"
+            echo "   to your shell's profile file"
+            ;;
+    esac
+    
+    echo "💡 Current shell: $CURRENT_SHELL"
 fi
 
 echo ""
