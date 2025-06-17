@@ -7,9 +7,19 @@ SCRIPT_PATH="/etc/profile.d/01-system-info.sh"
 
 echo "🚀 Installing System Info Script..."
 
+# Check if running as root
+if [ "$EUID" -eq 0 ]; then
+    # Running as root - no sudo needed
+    SUDO=""
+else
+    # Not root - use sudo
+    SUDO="sudo"
+    echo "🔐 Root access required for installation..."
+fi
+
 # Download and install the script
-if curl -sSL "$REPO_URL" | sudo tee "$SCRIPT_PATH" > /dev/null; then
-    sudo chmod +x "$SCRIPT_PATH"
+if curl -sSL "$REPO_URL" | $SUDO tee "$SCRIPT_PATH" > /dev/null; then
+    $SUDO chmod +x "$SCRIPT_PATH"
     echo "✅ Script installed to $SCRIPT_PATH"
 else
     echo "❌ Failed to download script"
