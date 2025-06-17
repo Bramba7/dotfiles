@@ -38,7 +38,7 @@ if grep -q "Microsoft\|WSL" /proc/version 2>/dev/null; then
     echo "🐧 WSL detected - adding to shell profiles..."
     
     # Detect current shell
-    Current_shell=$(ps -p "$PPID" -o comm= | sed 's/^-//')
+    CURRENT_SHELL=$(ps -p "$PPID" -o comm= | sed 's/^-//')
     
     case "$CURRENT_SHELL" in
         bash)
