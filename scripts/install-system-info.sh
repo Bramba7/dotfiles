@@ -32,11 +32,6 @@ else
     exit 1
 fi
 
-
-# WSL compatibility - detect shell and add to appropriate profile
-if grep -q "Microsoft\|WSL" /proc/version 2>/dev/null; then
-    echo "🐧 WSL detected - adding to shell profiles..."
-    
     # Detect current shell
     CURRENT_SHELL=$(ps -p "$PPID" -o comm= | sed 's/^-//')
     
@@ -71,15 +66,8 @@ if grep -q "Microsoft\|WSL" /proc/version 2>/dev/null; then
             echo "   to your shell's profile file"
             ;;
     esac
-    
     echo "💡 Current shell: $CURRENT_SHELL"
-fi
 
 echo ""
 echo "🎉 Installation complete!"
-echo "💡 Open a new terminal or run: source $SCRIPT_PATH"
 echo ""
-
-# Test the script
-echo "📋 Testing script..."
-source "$SCRIPT_PATH"
